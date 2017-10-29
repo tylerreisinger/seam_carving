@@ -1,4 +1,5 @@
 target/
+output/
 **/*.rs.bk
 *.sw?
 test_images/

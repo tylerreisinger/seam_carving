@@ -10,6 +10,13 @@ pub struct ImageGradient {
 }
 
 impl ImageGradient {
+    pub fn num_pixels(&self) -> usize {
+        (self.width as usize) * (self.height as usize)
+    }
+    pub fn dimensions(&self) -> (u32, u32) {
+        (self.width, self.height)
+    }
+
     pub fn from_luma_image(image: &image::RgbaImage) -> ImageGradient {
         let (width, height) = (image.width(), image.height());
 
