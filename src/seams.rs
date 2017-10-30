@@ -65,21 +65,17 @@ pub fn compute_path_grid(costs: &ImageCost) -> PathGrid {
             let center = grid[above_left_index + 1].cost();
             let right = grid[above_left_index + 2].cost();
 
-            let max = left.min(center.min(right));
-
-            let direction;
-            let prev_value;
-
-            if max == left {
-                direction = LEFT;
-                prev_value = left;
-            } else if max == center {
-                direction = CENTER;
-                prev_value = center;
+            let (direction, prev_value) = if left < center {
+                if left < right {
+                    (LEFT, left)
+                } else {
+                    (RIGHT, right)
+                }
+            } else if center < right {
+                (CENTER, center)
             } else {
-                direction = RIGHT;
-                prev_value = right;
-            }
+                (RIGHT, right)
+            };
 
             grid[index] = PathElement::new(prev_value + pixel_value, direction);
         }

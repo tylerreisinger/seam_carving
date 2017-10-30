@@ -30,8 +30,8 @@ impl ImageGradient {
         for y in 0..height {
             for x in 1..(width - 1) {
                 let index = x + y * width;
-                let val = (image[(x + 1, y)].to_luma().data[0] as f64) -
-                    (image[(x - 1, y)].to_luma().to_luma().data[0] as f64);
+                let val = f64::from(image[(x + 1, y)].to_luma().data[0]) -
+                    f64::from(image[(x - 1, y)].to_luma().data[0]);
                 gradient[index as usize].x = val;
             }
         }
@@ -39,8 +39,8 @@ impl ImageGradient {
         for x in 0..width {
             for y in 1..(height - 1) {
                 let index = x + y * width;
-                let val = (image[(x, (y + 1))].to_luma().data[0] as f64) -
-                    (image[(x, (y - 1))].to_luma().to_luma().data[0] as f64);
+                let val = f64::from(image[(x, (y + 1))].to_luma().data[0]) -
+                    f64::from(image[(x, (y - 1))].to_luma().data[0]);
                 gradient[index as usize].y = val;
             }
         }
