@@ -1,5 +1,5 @@
 use image::{self, Pixel};
-use cgmath::{Vector2, InnerSpace};
+use cgmath::Vector2;
 use std::f64;
 
 #[derive(Debug, Clone)]
@@ -15,6 +15,9 @@ impl ImageGradient {
     }
     pub fn dimensions(&self) -> (u32, u32) {
         (self.width, self.height)
+    }
+    pub fn data(&self) -> &[Vector2<f64>] {
+        &self.values
     }
 
     pub fn from_luma_image(image: &image::RgbaImage) -> ImageGradient {

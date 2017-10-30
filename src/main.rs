@@ -1,12 +1,13 @@
 use std::path;
 use std::cmp::Ordering;
-use cgmath::{Vector2, InnerSpace};
+use cgmath::InnerSpace;
 
 extern crate image;
 extern crate cgmath;
 
 pub mod gradient;
 pub mod seams;
+pub mod cost;
 
 fn load_image(path: &path::Path) -> image::ImageResult<image::RgbaImage> {
     image::open(path).map(|img| img.to_rgba())
@@ -14,6 +15,7 @@ fn load_image(path: &path::Path) -> image::ImageResult<image::RgbaImage> {
 
 fn main() {
     let path = path::Path::new("test_images/Broadway_tower_edit.jpg");
+    //let path = path::Path::new("test_images/Geom.png");
     let img = load_image(&path);
 
     if let Err(e) = img {
@@ -28,7 +30,8 @@ fn process_image(image: image::RgbaImage) {
     println!("{}x{}", image.width(), image.height());
 
     let gradient = gradient::ImageGradient::from_luma_image(&image);
-    let path_grid = seams::compute_path_grid(&gradient);
+    let costs = cost::compute_gradient_magnitude_cost(&gradient);
+    let path_grid = seams::compute_path_grid(&costs);
 
     save_gradient_image(&gradient, "output/GradientOut.png");
     save_path_grid_image(&path_grid, "output/PathGridOut.png");
@@ -52,10 +55,7 @@ fn save_path_grid_image<P>(grid: &seams::PathGrid, path: P)
 where
     P: AsRef<path::Path>,
 {
-    let (width, height) = (grid.width() as usize, grid.height() as usize);
-    let bottom_row_idx = (height - 1) * width;
-
-    let max = grid.data()[..]
+    let max = grid.data()
         .iter()
         .max_by(|x, y| if let Some(c) = x.cost().partial_cmp(&y.cost()) {
             c

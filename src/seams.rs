@@ -1,6 +1,4 @@
-use cgmath::Vector2;
-
-use gradient;
+use cost::ImageCost;
 
 pub const LEFT: i8 = -1;
 pub const CENTER: i8 = 0;
@@ -46,22 +44,22 @@ impl PathGrid {
     }
 }
 
-pub fn compute_path_grid(grad: &gradient::ImageGradient) -> PathGrid {
-    let mut grid = Vec::with_capacity(grad.num_pixels());
-    grid.resize(grad.num_pixels(), PathElement::default());
-    let (width, height) = (grad.width as usize, grad.height as usize);
+pub fn compute_path_grid(costs: &ImageCost) -> PathGrid {
+    let mut grid = Vec::with_capacity(costs.num_pixels());
+    grid.resize(costs.num_pixels(), PathElement::default());
+    let (width, height) = (costs.width() as usize, costs.height() as usize);
 
     // Start by copying the pixel costs to the first row separately.
     for x in 0..width {
         let index = x as usize;
-        grid[index] = PathElement::new(grad.values[index].x.abs(), 0);
+        grid[index] = PathElement::new(costs.data()[index], 0);
     }
 
     for y in 1..(height as usize) {
         for x in 1..(width as usize - 1) {
             let index = x + y * width;
             let above_left_index = (x - 1) + (y - 1) * width;
-            let pixel_value = grad.values[index].x.abs();
+            let pixel_value = costs.data()[index];
 
             let left = grid[above_left_index].cost();
             let center = grid[above_left_index + 1].cost();
