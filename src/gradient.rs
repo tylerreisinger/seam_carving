@@ -1,25 +1,35 @@
+use std::f64;
+
 use image::{self, Pixel};
 use cgmath::Vector2;
-use std::f64;
+
+use grid::Grid;
 
 #[derive(Debug, Clone)]
 pub struct ImageGradient {
-    pub values: Vec<Vector2<f64>>,
-    pub width: u32,
-    pub height: u32,
+    values: Vec<Vector2<f64>>,
+    width: u32,
+    height: u32,
+}
+
+impl Grid for ImageGradient {
+    type Element = Vector2<f64>;
+
+    fn width(&self) -> u32 {
+        self.width
+    }
+    fn height(&self) -> u32 {
+        self.height
+    }
+    fn data(&self) -> &[Vector2<f64>] {
+        &self.values
+    }
+    fn data_mut(&mut self) -> &mut [Vector2<f64>] {
+        &mut self.values
+    }
 }
 
 impl ImageGradient {
-    pub fn num_pixels(&self) -> usize {
-        (self.width as usize) * (self.height as usize)
-    }
-    pub fn dimensions(&self) -> (u32, u32) {
-        (self.width, self.height)
-    }
-    pub fn data(&self) -> &[Vector2<f64>] {
-        &self.values
-    }
-
     pub fn from_luma_image(image: &image::RgbaImage) -> ImageGradient {
         let (width, height) = (image.width(), image.height());
 

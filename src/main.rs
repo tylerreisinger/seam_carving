@@ -2,12 +2,15 @@ use std::path;
 use std::cmp::Ordering;
 use cgmath::InnerSpace;
 
+use grid::Grid;
+
 extern crate image;
 extern crate cgmath;
 
 pub mod gradient;
 pub mod seams;
 pub mod cost;
+pub mod grid;
 
 fn load_image(path: &path::Path) -> image::ImageResult<image::RgbaImage> {
     image::open(path).map(|img| img.to_rgba())
@@ -42,12 +45,12 @@ where
     P: AsRef<path::Path>,
 {
     let img_buf = gradient
-        .values
+        .data()
         .iter()
         .map(|x| ((x / 255.0).magnitude() / f64::sqrt(2.0) * 255.0) as u8)
         .collect::<Vec<_>>();
 
-    let img = image::GrayImage::from_raw(gradient.width, gradient.height, img_buf).unwrap();
+    let img = image::GrayImage::from_raw(gradient.width(), gradient.height(), img_buf).unwrap();
     img.save(path).unwrap();
 }
 

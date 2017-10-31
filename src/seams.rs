@@ -1,8 +1,15 @@
 use cost::ImageCost;
+use grid::Grid;
 
 pub const LEFT: i8 = -1;
 pub const CENTER: i8 = 0;
 pub const RIGHT: i8 = 1;
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Seam {
+    end: u32,
+    total_cost: f64,
+}
 
 #[derive(Debug, Clone, Default)]
 pub struct PathElement {
@@ -17,6 +24,23 @@ pub struct PathGrid {
     height: u32,
 }
 
+impl Grid for PathGrid {
+    type Element = PathElement;
+
+    fn width(&self) -> u32 {
+        self.width
+    }
+    fn height(&self) -> u32 {
+        self.height
+    }
+    fn data(&self) -> &[PathElement] {
+        &self.grid
+    }
+    fn data_mut(&mut self) -> &mut [PathElement] {
+        &mut self.grid
+    }
+}
+
 impl PathElement {
     pub fn new(cumulative_cost: f64, direction: i8) -> PathElement {
         PathElement {
@@ -29,18 +53,6 @@ impl PathElement {
     }
     pub fn direction(&self) -> i8 {
         self.direction
-    }
-}
-
-impl PathGrid {
-    pub fn width(&self) -> u32 {
-        self.width
-    }
-    pub fn height(&self) -> u32 {
-        self.height
-    }
-    pub fn data(&self) -> &[PathElement] {
-        &self.grid
     }
 }
 
